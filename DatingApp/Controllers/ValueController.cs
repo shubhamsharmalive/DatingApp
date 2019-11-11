@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DatingApp.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,10 +15,26 @@ namespace DatingApp.Controllers
     [ApiController]
     public class ValueController : ControllerBase
     {
-        [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        private readonly DataContext _context;
+
+        public ValueController(DataContext context)
         {
-            return new string[] { "value1", "value2" };
+            _context = context;
+        }
+
+        [HttpGet]
+        public IActionResult GetValues()
+        {
+            var values = _context.Values.ToList();
+            return Ok(values);
+
+        }
+
+        [HttpGet("id")]
+        public IActionResult GetValue(int id)
+        {
+            var value = _context.Values.FirstOrDefault(x => x.Id == id);
+            return Ok(value);
 
         }
     }
